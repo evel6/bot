@@ -24,29 +24,40 @@ def collect():
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     user_agent = request.headers.get('User-Agent', '')
     lang = request.headers.get('Accept-Language', '')
+location = {}
+try:
+    geo = requests.get(f"https://ipinfo.io/{ip}/json").json()
 
+    country = geo.get("country", "N/A")
+    city = geo.get("city", "N/A")
+    region = geo.get("region", "N/A")
+    org = geo.get("org", "N/A")
+    asn = geo.get("asn", "N/A")
+    postal = geo.get("postal", "N/A")
+
+except:
+    country = city = region = org = asn = postal = "N/A"
+
+data = {
+    "ip": ip,
+    "userAgent": user_agent,
+    "language": language,
+    "platform": platform,
+    "timezone": timezone,
+    "localTime": local_time,
+    "screen": screen,
+    "location": {
+        "ip": ip,
+        "country": country,
+        "city": city,
+        "region": region,
+        "org": org,
+        "asn": asn,
+        "postal": postal,
+    },
+    "timestamp": datetime.now().isoformat()
+}
     # جلب معلومات الدولة والمدينة
-     location = {}
-    try:
-        geo = requests.get(f"https://ipinfo.io/{ip}/json", timeout=3).json()
-
-        country = geo.get("country", "N/A")
-        city = geo.get("city", "N/A")
-        region = geo.get("region", "N/A")
-        org = geo.get("org", "N/A")
-        asn = geo.get("asn", "N/A")
-        postal = geo.get("postal", "N/A")
-
-        location = {
-            "ip": ip,
-            "country": country,
-            "city": city,
-            "region": region,
-            "org": org,
-            "asn": asn,
-            "postal": postal
-        }
-
     except Exception as e:
         print("[Geo Error]", e)
 
