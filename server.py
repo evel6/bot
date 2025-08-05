@@ -36,7 +36,9 @@ def collect():
     # ========== تحليل ipinfo ==========
     try:
         geo_response = requests.get(f"https://ipinfo.io/{ip}?token={IPINFO_TOKEN}", timeout=5)
+        geo_response.raise_for_status()  # تأكيد نجاح الطلب
         geo = geo_response.json()
+        print("[IPINFO Raw]", geo)  # طباعة محتوى الرد لاختبار الدقة
 
         city = geo.get("city", "N/A")
         region = geo.get("region", "N/A")
@@ -50,7 +52,6 @@ def collect():
 
     except Exception as e:
         print("[IPINFO ERROR]", str(e))
-        geo = {}
         city = region = country = org = "N/A"
         is_vpn = is_proxy = is_tor = False
 
@@ -99,4 +100,3 @@ def static_files(filename):
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
-
