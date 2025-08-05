@@ -1,4 +1,4 @@
- from flask import Flask, request, render_template, redirect, send_from_directory
+from flask import Flask, request, render_template, redirect, send_from_directory
 from datetime import datetime
 import requests
 import json
@@ -75,3 +75,4 @@ def static_files(filename):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
