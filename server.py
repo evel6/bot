@@ -8,7 +8,7 @@ app = Flask(__name__)
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 MAKE_WEBHOOK = os.environ.get("MAKE_WEBHOOK")
 REDIRECT_URL = os.environ.get("TRACK_URL")
-IPINFO_TOKEN = os.environ.get("IPINFO_TOKEN")
+IPINFO_TOKEN = "cb4dd6c6220e6e"
 
 @app.route('/')
 def home():
@@ -99,4 +99,5 @@ def static_files(filename):
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
     app.run(host='0.0.0.0', port=port)
