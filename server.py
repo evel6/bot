@@ -26,46 +26,29 @@ def collect():
     lang = request.headers.get('Accept-Language', '')
 
     # جلب معلومات الدولة والمدينة
- location = {}
+     location = {}
+    try:
+        geo = requests.get(f"https://ipinfo.io/{ip}/json", timeout=3).json()
 
-try:
-    geo = requests.get(f"https://ipinfo.io/{ip}/json", timeout=3).json()
+        country = geo.get("country", "N/A")
+        city = geo.get("city", "N/A")
+        region = geo.get("region", "N/A")
+        org = geo.get("org", "N/A")
+        asn = geo.get("asn", "N/A")
+        postal = geo.get("postal", "N/A")
 
-    country = geo.get("country", "N/A")
-    city = geo.get("city", "N/A")
-    region = geo.get("region", "N/A")
-    org = geo.get("org", "N/A")
-    asn = geo.get("asn", "N/A")
-    postal = geo.get("postal", "N/A")
+        location = {
+            "ip": ip,
+            "country": country,
+            "city": city,
+            "region": region,
+            "org": org,
+            "asn": asn,
+            "postal": postal
+        }
 
-    location = {
-        "ip": ip,
-        "country": country,
-        "city": city,
-        "region": region,
-        "org": org,
-        "asn": asn,
-        "postal": postal
-    }
-
-except Exception as e:
-    print("[Geo Error]", e)
-
-data = {
-    "ip": ip,
-    "userAgent": user_agent,
-    "language": lang,
-    "platform": js_data.get("platform"),
-    "timezone": js_data.get("timezone"),
-    "localTime": js_data.get("localTime"),
-    "screen": {
-        "width": js_data.get("width"),
-        "height": js_data.get("height"),
-        "colorDepth": js_data.get("colorDepth")
-    },
-    "location": location,
-    "timestamp": datetime.utcnow().isoformat()
-}
+    except Exception as e:
+        print("[Geo Error]", e)
 
 
     # إرسال إلى Webhook الخاص بـ Make
