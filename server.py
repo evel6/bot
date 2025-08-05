@@ -20,47 +20,50 @@ def track():
 
 @app.route('/collect', methods=['POST'])
 def collect():
-    js_data = request.get_json()
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     user_agent = request.headers.get('User-Agent', '')
-    lang = request.headers.get('Accept-Language', '')
-location = {}
-try:
-    geo = requests.get(f"https://ipinfo.io/{ip}/json").json()
+    language = request.headers.get('Accept-Language', '')
 
-    country = geo.get("country", "N/A")
-    city = geo.get("city", "N/A")
-    region = geo.get("region", "N/A")
-    org = geo.get("org", "N/A")
-    asn = geo.get("asn", "N/A")
-    postal = geo.get("postal", "N/A")
+    try:
+        js_data = request.get_json()
+        platform = js_data.get("platform", "")
+        timezone = js_data.get("timezone", "")
+        local_time = js_data.get("localTime", "")
+        screen = js_data.get("screen", "")
+    except:
+        platform = timezone = local_time = screen = ""
 
-except:
-    country = city = region = org = asn = postal = "N/A"
-
-data = {
-    "ip": ip,
-    "userAgent": user_agent,
-    "language": language,
-    "platform": platform,
-    "timezone": timezone,
-    "localTime": local_time,
-    "screen": screen,
-    "location": {
-        "ip": ip,
-        "country": country,
-        "city": city,
-        "region": region,
-        "org": org,
-        "asn": asn,
-        "postal": postal,
-    },
-    "timestamp": datetime.now().isoformat()
-}
-    # جلب معلومات الدولة والمدينة
+    try:
+        geo = requests.get(f"https://ipinfo.io/{ip}/json").json()
+        country = geo.get("country", "N/A")
+        city = geo.get("city", "N/A")
+        region = geo.get("region", "N/A")
+        org = geo.get("org", "N/A")
+        asn = geo.get("asn", "N/A")
+        postal = geo.get("postal", "N/A")
     except Exception as e:
         print("[Geo Error]", e)
+        country = city = region = org = asn = postal = "N/A"
 
+    data = {
+        "ip": ip,
+        "userAgent": user_agent,
+        "language": language,
+        "platform": platform,
+        "timezone": timezone,
+        "localTime": local_time,
+        "screen": screen,
+        "location": {
+            "ip": ip,
+            "country": country,
+            "city": city,
+            "region": region,
+            "org": org,
+            "asn": asn,
+            "postal": postal,
+        },
+        "timestamp": datetime.now().isoformat()
+    }
 
     # إرسال إلى Webhook الخاص بـ Make
     if MAKE_WEBHOOK:
@@ -76,6 +79,7 @@ data = {
 def static_files(filename):
     return send_from_directory('static', filename)
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port) 
+    app.run(host='0.0.0.0', port=port)
+ 
