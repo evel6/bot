@@ -6,8 +6,8 @@ import json
 app = Flask(__name__)
 
 # إعدادات
-REDIRECT_URL = "https://t.me/YourChannel"  # رابط التحويل النهائي
-MAKE_WEBHOOK = "https://hook.eu2.make.com/yplx3y98kpc1f8zzm6434nm36cfu0ego"
+ MAKE_WEBHOOK = os.environ.get("MAKE_WEBHOOK")
+REDIRECT_URL = os.environ.get("REDIRECT_URL", "https://t.me/YourChannel")
 
 @app.route('/')
 def home():
