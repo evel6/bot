@@ -1,0 +1,36 @@
+body {
+  background: #ffffff;
+  font-family: sans-serif;
+  text-align: center;
+  padding-top: 50px;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+}
+
+.logo {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+.loading-bar {
+  width: 100%;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 10px;
+  margin: 20px 0;
+}
+
+.bar {
+  width: 0;
+  height: 100%;
+  background: #0088cc;
+  animation: load 4s linear forwards;
+}
+
+@keyframes load {
+  to { width: 100%; }
+}

