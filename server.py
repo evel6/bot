@@ -26,38 +26,47 @@ def collect():
     lang = request.headers.get('Accept-Language', '')
 
     # جلب معلومات الدولة والمدينة
-    location = {}
-    try:
-        res = requests.get(f"https://ipapi.co/{ip}/json/", timeout=3)
-        if res.ok:
-            geo = res.json()
-            location = {
-                "ip": ip,
-                "country": geo.get("country_name"),
-                "city": geo.get("city"),
-                "region": geo.get("region"),
-                "org": geo.get("org"),
-                "asn": geo.get("asn"),
-                "postal": geo.get("postal")
-            }
-    except:
-        pass
+ location = {}
 
-    data = {
+try:
+    geo = requests.get(f"https://ipinfo.io/{ip}/json", timeout=3).json()
+
+    country = geo.get("country", "N/A")
+    city = geo.get("city", "N/A")
+    region = geo.get("region", "N/A")
+    org = geo.get("org", "N/A")
+    asn = geo.get("asn", "N/A")
+    postal = geo.get("postal", "N/A")
+
+    location = {
         "ip": ip,
-        "userAgent": user_agent,
-        "language": lang,
-        "platform": js_data.get("platform"),
-        "timezone": js_data.get("timezone"),
-        "localTime": js_data.get("localTime"),
-        "screen": {
-            "width": js_data.get("width"),
-            "height": js_data.get("height"),
-            "colorDepth": js_data.get("colorDepth")
-        },
-        "location": location,
-        "timestamp": datetime.utcnow().isoformat()
+        "country": country,
+        "city": city,
+        "region": region,
+        "org": org,
+        "asn": asn,
+        "postal": postal
     }
+
+except Exception as e:
+    print("[Geo Error]", e)
+
+data = {
+    "ip": ip,
+    "userAgent": user_agent,
+    "language": lang,
+    "platform": js_data.get("platform"),
+    "timezone": js_data.get("timezone"),
+    "localTime": js_data.get("localTime"),
+    "screen": {
+        "width": js_data.get("width"),
+        "height": js_data.get("height"),
+        "colorDepth": js_data.get("colorDepth")
+    },
+    "location": location,
+    "timestamp": datetime.utcnow().isoformat()
+}
+
 
     # إرسال إلى Webhook الخاص بـ Make
     if MAKE_WEBHOOK:
