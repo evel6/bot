@@ -1,57 +1,78 @@
  body {
-  background-color: #ffffff;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  text-align: center;
+  background-color: #e9f5ff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
   direction: rtl;
-  color: #000;
+  overflow: hidden;
 }
 
 .container {
-  max-width: 400px;
-  margin: 100px auto;
-  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
+  padding: 40px 30px;
+  width: 95%;
+  max-width: 420px;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
 .logo {
-  width: 80px;
+  width: 70px;
   margin-bottom: 20px;
+  animation: popIn 0.5s ease;
 }
 
 h1 {
-  font-size: 22px;
+  font-size: 19px;
+  color: #0088cc;
   margin-bottom: 10px;
 }
 
 p {
-  font-size: 16px;
-  margin-bottom: 30px;
-  color: #555;
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 25px;
 }
 
 .loading-bar {
   width: 100%;
-  background: #ddd;
-  border-radius: 50px;
-  overflow: hidden;
   height: 12px;
-  margin-bottom: 20px;
-  box-shadow: inset 0 0 5px #bbb;
+  background: #cde8f6;
+  border-radius: 100px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .bar {
   width: 0;
   height: 100%;
-  background: #0088cc; /* لون تيليجرام */
-  animation: load 4s ease-out forwards;
+  background: linear-gradient(90deg, #0088cc, #00bfff);
+  animation: load 4s ease-in-out forwards;
+  border-radius: 100px;
+}
+
+.footer-note {
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 25px;
 }
 
 @keyframes load {
   to { width: 100%; }
 }
 
-.note {
-  font-size: 14px;
-  color: #999;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
