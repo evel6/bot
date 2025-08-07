@@ -1,63 +1,73 @@
-
 body {
   margin: 0;
   padding: 0;
-  background-color: #1f1f1f; /* Dark mode */
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  color: #ffffff;
+  background-color: #e9eff5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  direction: rtl;
 }
 
-.loading-container {
+.container {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 22px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   text-align: center;
+  max-width: 400px;
+  width: 90%;
   animation: fadeIn 0.8s ease-in-out;
 }
 
-.loading-container img {
-  width: 80px;
+.container img {
+  width: 90px;
   margin-bottom: 20px;
-  animation: pulse 1.5s infinite ease-in-out;
+  animation: bounce 1s ease;
 }
 
-.loading-container p {
-  font-size: 17px;
-  color: #ccc;
-  animation: fadeInText 1.2s ease-in-out;
+.container h1 {
+  font-size: 18px;
+  color: #0088cc;
+  margin-bottom: 10px;
 }
 
-/* حركة تحميل */
-.loader {
-  margin: 20px auto;
-  border: 4px solid #2f2f2f;
-  border-top: 4px solid #00bfff;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  animation: spin 1s linear infinite;
+.container p {
+  font-size: 14px;
+  color: #444;
+  margin: 0;
+  line-height: 1.6;
 }
 
-/* Animations */
+.loading-bar {
+  margin-top: 20px;
+  height: 8px;
+  width: 100%;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.loading-bar-inner {
+  width: 0%;
+  height: 100%;
+  background: #0088cc;
+  animation: loadBar 2s linear forwards;
+}
+
+/* الحركات */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fadeInText {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+@keyframes bounce {
+  0% { transform: scale(0.9); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(1); opacity: 0.9; }
+@keyframes loadBar {
+  to { width: 100%; }
 }
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
