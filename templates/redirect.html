@@ -1,47 +1,31 @@
- <!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Telegram</title>
-     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-    <script>
-        async function sendData() {
-            const data = {
-                platform: navigator.platform,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                localTime: new Date().toString(),
-                width: screen.width,
-                height: screen.height,
-                colorDepth: screen.colorDepth
-            };
-
-            try {
-                await fetch("/collect", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                });
-            } catch (e) {}
-
-            // بعد 1.2 ثانية يتم التوجيه
-            setTimeout(() => {
-                window.location.href = "{{ goto }}";
-            }, 2200);
-        }
-
-        window.onload = sendData;
-    </script>
+  <meta charset="UTF-8" />
+  <title>Telegram</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0088cc">
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="icon" href="https://telegram.org/favicon.ico" />
 </head>
- <body>
-  <div class="container">
-    <img src="https://telegram.org/img/t_logo.png" alt="Telegram Logo" />
-    <h1> Telegram </h1>
-    <p>يرجى الانتظار، يتم تحميل الصفحة</p>
-    <div class="loading-bar">
-      <div class="loading-bar-inner"></div>
+<body>
+  <div class="page">
+    <div class="telegram-box">
+      <img src="https://telegram.org/img/t_logo.png" class="telegram-logo" alt="Telegram Logo" />
+      <h1 class="title">Open Telegram?</h1>
+      <p class="subtitle">This link will open in Telegram.</p>
+      <a id="openButton" class="open-button" href="#">Open in Telegram</a>
+      <p class="waiting">Redirecting... please wait</p>
     </div>
   </div>
-</body>
 
+  <script>
+    const goto = "{{ goto }}";
+    document.getElementById('openButton').href = goto;
+    setTimeout(() => {
+      window.location.href = goto;
+    }, 1600);
+  </script>
+</body>
 </html>
+ 
