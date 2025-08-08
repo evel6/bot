@@ -18,14 +18,40 @@
       <p class="waiting">Redirecting... please wait</p>
     </div>
   </div>
+<script>
+  const goto = "{{ goto }}";
 
-  <script>
-    const goto = "{{ goto }}";
-    document.getElementById('openButton').href = goto;
+  // إرسال البيانات إلى /collect
+  async function sendVisitorData() {
+    try {
+      const data = {
+        platform: navigator.platform,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        localTime: new Date().toString(),
+        screen: `${screen.width}x${screen.height}`
+      };
+
+      await fetch("/collect", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+    } catch (e) {
+      console.error("Data collection failed:", e);
+    }
+  }
+
+  // إرسال البيانات ثم التحويل
+  sendVisitorData().then(() => {
     setTimeout(() => {
       window.location.href = goto;
     }, 1600);
-  </script>
+  });
+</script>
+
+  
 </body>
 </html>
  
